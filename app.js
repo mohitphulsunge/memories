@@ -15,7 +15,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 
 app.use(flash());
-mongoose.connect("mongodb://localhost/memories");
+mongoose.connect(process.env.MONGO_DB_URL);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
@@ -41,17 +41,17 @@ app.use(function(req, res, next){
 
 
 cloudinary.config({
-cloud_name: "dakmrsss3",
-api_key: "428146883936789",
-api_secret: "_RLA62NbU_1LNUcICakC0P42PrA"
+cloud_name: process.env.CLOUD_NAME,
+api_key: process.env.API_KEY_CLOUDINARY,
+api_secret: process.env.SECRET_KEY_CLOUDINARY
 });
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'some-folder-name',
+    folder: 'memories',
     format: async (req, file) => 'png', // supports promises as well
-    public_id: (req, file) => 'computed-filename-using-request',
+    public_id: (req, file) => 'memory'+(new Date()).getTime(),
   },
 });
 
@@ -229,7 +229,9 @@ app.put("/memories/:id",checkLoginAndMemoryOwnership,function(req, res){
 
 
 app.delete("/memories/:id",checkLoginAndMemoryOwnership, function(req, res){
+	
 	if(typeof Memory.findById(req.params.id).comment._id !== 'undefined'){
+	console.log("checkoint");
 	Comment.findByIdAndRemove(Memory.findById(req.params.id).comment._id, function(err){
 		if(err){
 			console.log(err);
@@ -252,25 +254,30 @@ app.delete("/memories/:id",checkLoginAndMemoryOwnership, function(req, res){
 
 
 //Auth Routes
-//app.get("/register", function(req, res){
-//	res.render("register");
-//	
-//});
+app.get("/register", function(req, res){
+	res.render("register");
+	
+});
 
-//app.post("/register", function(req, res){
-//	var newUser = new User({username: req.body.username});
-//	User.register(newUser, req.body.password, function(err, user){
-//		if(err){
-//			console.log(err);
-//			req.flash("error", err.message);
-//			return res.render("register");
-//		}
-//		passport.authenticate("local")(req, res, function(){
-//			res.redirect("/memories");
-//		});
+app.post("/register", function(req, res){
+	if(req.body.password === "thisIsARandomPasswordForSecurity987612345"){
+	var newUser = new User({username: req.body.username});
+	User.register(newUser, req.body.password, function(err, user){
+		if(err){
+			console.log(err);
+			req.flash("error", err.message);
+			return res.render("register");
+		}
+		passport.authenticate("local")(req, res, function(){
+			res.redirect("/memories");
+		});
 		
-//	});
-//});
+	});
+	
+}else{
+	res.redirect("/register");
+}
+});
 
 app.get("/login", function(req, res){
 	res.render("login");
@@ -302,7 +309,6 @@ function isLoggedIn(req, res, next){
 }
 
 function checkLoginAndMemoryOwnership(req, res, next){
-	console.log("check");
 	if(req.isAuthenticated()) {
 	Memory.findById(req.params.id, function(err, foundMemory){
 		if(err){
