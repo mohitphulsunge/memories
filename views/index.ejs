@@ -1,0 +1,27 @@
+<%- include ("partials/header") %>
+<div class = "container">
+	<header class="jumbotron">
+		<div class = "container">
+		<h1>Your Memories,</h1>
+		<p>Safeguarded by us!!!</p>
+		<a class="btn btn-primary btn-large "href = "/memories/new">Add new Memory</a>
+		<div class = "container">
+	</header>	
+
+	<div class = "row text-center text-lg-left" id = "memoryImage">
+		<% posts.forEach(function(post){ %>
+		<div class = "col-lg-4 col-s-6 mb-4">
+			<div class = "card">
+				<img class = "card-img-top" src = "<%= post.image %>" height = "300">
+				<div class = "card-body text-center">
+					<p><h4 class = "card-title text-center"><%= post.title  %></h4></p>
+						<a href = "/memories/<%= post._id %> " class = "btn btn-primary">View</a>
+				</div>
+			</div>
+		</div>
+		<% }); %>
+		
+	</div>	
+
+</div>	
+<%- include ("partials/footer") %>

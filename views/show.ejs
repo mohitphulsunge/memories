@@ -1,0 +1,50 @@
+<%- include ("partials/header") %>
+<style>
+	.card{
+        margin: 0 auto; /* Added */
+        float: none; /* Added */
+        margin-bottom: 10px; /* Added */
+	}
+	#deleteForm{
+		display: inline;
+	}
+
+</style>
+
+
+
+<div class = "container">
+<div class = "row">
+	<div class = "col-lg-10 mx-auto">
+	<div class = "card">
+		<h1 style = "text-align: center;"><%= post.title %></h1>
+		<img class = "card-img-top" src = "<%= post.image %>" height = "500">
+		<div class="card-body">
+			<div class = "pull-left">
+			<p class="card-text"><h5><%= post.description %></h5></p>
+			</div>
+			<p><em>Posted by <%= post.author.username %> at <%= post.dateTime.toLocaleString() %></em></p>
+			<% if(post.author.id.equals(currentUser._id)){%>
+				<a class = "btn btn-xs btn-warning" href = "/memories/<%= post._id%>/edit">Edit</a>
+				<form id="deleteForm" action = "/memories/<%= post._id %>?_method=DELETE" method = "POST">
+					<button class = "btn btn-xs btn-danger">Delete</button>
+				</form>
+			<%}%>
+		</div>
+	</div>
+	<div class = "well">
+		<p style = "text-align: center;">
+				<a class = "btn btn-success" href = "/memories/<%= post._id%>/comments/new">Comment!</a>
+			</p>
+		<% post.comment.forEach(function(comment){ %>
+				<strong><p><h5 class = "pull-left"><%= comment.author.username %></strong> : <%= comment.text%></h5></p>
+				<% })%>
+
+	</div>	
+	</div>
+<div class = "row">
+
+
+</div>
+
+<%- include ("partials/footer") %>

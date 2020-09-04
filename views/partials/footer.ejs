@@ -1,0 +1,29 @@
+ <script> 
+ 
+ 
+ 
+	if(localStorage.getItem('theme') === 'nostalgia'){
+ 			$('body').attr("class","nostalgia");
+ 		
+ 		}
+ 		else{
+ 			$('body').attr("class","normal");
+ 			localStorage.setItem('theme','normal');
+ 		}
+function myFunction(){
+	if(!localStorage.getItem('theme') || localStorage.getItem('theme') === 'normal'){
+		localStorage.setItem('theme','nostalgia');
+	  	$('body').attr("class","nostalgia");
+	}
+	else{
+	  	$('body').attr("class","normal");
+	  	localStorage.setItem('theme','normal');
+	}
+	
+	}
+
+         
+ </script> 
+
+</body>
+</html>
